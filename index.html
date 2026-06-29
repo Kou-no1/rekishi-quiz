@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>れきし人物クイズ｜小6 社会</title>
+<style>
+:root{
+  --body:"Hiragino Maru Gothic ProN","ヒラギノ丸ゴ ProN W4","Yu Gothic","游ゴシック体","YuGothic","Meiryo","メイリオ",system-ui,-apple-system,sans-serif;
+  --disp:"Hiragino Maru Gothic ProN","ヒラギノ丸ゴ ProN W4","Yu Gothic","游ゴシック体","Meiryo",system-ui,sans-serif;
+  --mincho:"Hiragino Mincho ProN","ヒラギノ明朝 ProN","Yu Mincho","游明朝","YuMincho","MS PMincho",serif;
+  --sumi:#2b2b33; --bg2:#efe7d7; --card:#fffdf9; --line:#e7ddc9;
+  --ai:#2d4a7c; --shu:#d8503f; --kin:#e0922e; --ok:#2e9b6b; --ng:#d8503f; --muted:#8f8674;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:var(--body);color:var(--sumi);line-height:1.5;background:linear-gradient(180deg,#f7f4ec,#efe6d6);background-attachment:fixed;-webkit-text-size-adjust:100%}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--ai);outline-offset:2px;border-radius:6px}
+#app{max-width:600px;margin:0 auto;padding:18px 16px 64px}
+
+/* hero */
+.hero{margin-bottom:6px}
+.hero.small{margin-bottom:6px}
+.eyebrow{font-family:var(--mincho);letter-spacing:.34em;font-size:12px;color:var(--ai);text-indent:.34em}
+.title{font-family:var(--disp);font-weight:800;font-size:clamp(26px,7.6vw,38px);line-height:1.12;margin:.12em 0 .12em;color:var(--sumi)}
+.seal{display:inline-flex;align-items:center;justify-content:center;width:1.18em;height:1.18em;background:var(--shu);color:#fff;border-radius:9px;font-family:var(--mincho);font-weight:700;margin-right:.2em;transform:rotate(-4deg);box-shadow:0 3px 9px rgba(216,80,63,.35);font-size:.8em;vertical-align:-.12em}
+.sub{color:var(--muted);font-size:14px;margin:0}
+
+/* generic */
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 6px 18px rgba(60,50,30,.05)}
+.seclabel{font-family:var(--mincho);font-size:13px;color:#6b6357;margin:22px 4px 10px;letter-spacing:.08em;display:flex;align-items:center;gap:8px}
+.seclabel::before{content:"";width:6px;height:18px;border-radius:3px;background:var(--ai)}
+.foot{font-size:12px;color:var(--muted);text-align:center;margin-top:18px;line-height:1.7}
+.bar{flex:1;height:10px;background:var(--bg2);border-radius:999px;overflow:hidden}
+.bar span{display:block;height:100%;background:linear-gradient(90deg,var(--kin),var(--shu));border-radius:999px;transition:width .5s}
+.bar.big{height:14px}
+
+/* rank */
+.rankcard{display:flex;align-items:center;gap:14px}
+.rankbadge{width:58px;height:58px;border-radius:16px;background:var(--era);color:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;flex:none;box-shadow:0 6px 14px rgba(0,0,0,.12)}
+.rankinfo{flex:1;min-width:0}
+.ranklabel{font-size:12px;color:var(--muted)}
+.rankname{font-family:var(--disp);font-weight:800;font-size:20px}
+.rankprog{display:flex;align-items:center;gap:8px;font-size:13px;color:#6b6357;margin-top:6px}
+.rankprog b{color:var(--sumi);font-size:15px}
+
+/* timeline ribbon (signature) */
+.ribbon{display:flex;gap:4px;margin:2px 0 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.seg{flex:1 0 auto;min-width:46px;border-radius:10px;padding:8px 4px 7px;text-align:center;background:#ddd6c7;color:#857d6e;position:relative;border-top:3px solid var(--era);transition:background .3s}
+.seg.lit{background:var(--era);color:#fff;border-top-color:rgba(255,255,255,.55)}
+.seg .e{font-family:var(--mincho);font-size:10.5px;line-height:1.1;white-space:nowrap}
+.seg .n{font-size:11px;font-weight:700;margin-top:2px}
+.seg.done::after{content:"⭐";position:absolute;top:-7px;right:-3px;font-size:13px}
+
+/* modes */
+.modes{display:flex;flex-direction:column;gap:10px}
+.mode{display:flex;align-items:center;gap:12px;text-align:left;width:100%;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer;font:inherit;color:var(--sumi);transition:transform .08s,box-shadow .15s,border-color .15s;-webkit-tap-highlight-color:transparent}
+.mode:hover{box-shadow:0 8px 20px rgba(60,50,30,.1);border-color:#d9cfba}
+.mode:active{transform:scale(.985)}
+.mode.big{padding:16px;border-width:2px}
+.mode .micon{font-size:24px;flex:none;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--bg2);border-radius:13px}
+.mode.big .micon{background:#eaf0f8}
+.mode .mtxt{display:flex;flex-direction:column;min-width:0}
+.mode .mtxt b{font-size:17px}
+.mode .mtxt i{font-style:normal;font-size:12px;color:var(--muted);margin-top:2px}
+.mode>b{font-size:16px}
+.mode>i{font-style:normal;font-size:12px;color:var(--muted)}
+.moderow{display:flex;gap:10px}
+.moderow .mode{flex:1;flex-direction:column;text-align:center;gap:6px;padding:14px 8px;justify-content:center}
+.moderow .micon{margin:0 auto}
+.mode.wide{justify-content:flex-start}
+.mode.ghost{background:transparent;box-shadow:none}
+
+/* chips / settings */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:13px;padding:7px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;color:#6b6357;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.chip.on{background:var(--ai);border-color:var(--ai);color:#fff;font-weight:700}
+.chip small{font-weight:400;font-size:11px;opacity:.8;margin-left:4px}
+.setrow{display:flex;gap:12px;align-items:flex-start;padding:10px 0}
+.setrow+.setrow{border-top:1px dashed var(--line)}
+.setk{font-size:13px;color:#6b6357;width:84px;flex:none;padding-top:7px}
+
+/* topbar */
+.topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.quit{font:inherit;font-size:13px;color:#6b6357;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+.tstat{display:flex;gap:10px;margin-left:auto;align-items:center}
+.counter,.timer{font-size:13px;color:#6b6357;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 12px;white-space:nowrap}
+.timer{font-weight:700;color:var(--shu)}
+.score{font-size:14px;font-weight:800;color:var(--kin);white-space:nowrap}
+.combo{flex-basis:100%;text-align:center;color:var(--shu);font-weight:800;font-size:14px;min-height:18px}
+.combo:not(:empty){animation:pop .3s}
+
+/* question */
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px 18px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(60,50,30,.06);animation:slideup .3s both}
+.qbar{position:absolute;top:0;left:0;right:0;height:6px;background:var(--era)}
+.qperson{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:6px}
+.qname{font-family:var(--disp);font-weight:800;font-size:26px;line-height:1.1}
+.qname span{display:block;font-family:var(--body);font-weight:400;font-size:13px;color:var(--muted);margin-top:3px}
+.qbadge{font-family:var(--mincho);font-size:12px;color:#fff;background:var(--era);padding:3px 12px;border-radius:999px}
+.qask{margin-top:16px;font-size:16px;font-weight:700;color:var(--sumi)}
+.qask.top{margin-top:6px;margin-bottom:14px}
+.qdeed{font-size:20px;font-weight:800;line-height:1.55;color:var(--sumi);background:var(--bg2);border-radius:14px;padding:16px 14px}
+
+/* choices */
+.choices{display:grid;gap:10px;margin-top:14px}
+.choices.col{grid-template-columns:1fr}
+.choices.grid2{grid-template-columns:1fr 1fr}
+@media (max-width:360px){.choices.grid2{grid-template-columns:1fr}}
+.choice{font:inherit;text-align:left;background:#fff;border:2px solid var(--line);border-radius:14px;padding:14px 16px;font-size:16px;line-height:1.45;color:var(--sumi);cursor:pointer;transition:transform .07s,border-color .15s,background .15s,box-shadow .15s,opacity .2s;-webkit-tap-highlight-color:transparent;min-height:54px;display:flex;align-items:center}
+.choice:hover{border-color:var(--ai);box-shadow:0 6px 16px rgba(45,74,124,.1)}
+.choice:active{transform:scale(.99)}
+.choice.withava{flex-direction:row;gap:10px;align-items:center;font-weight:700;font-size:17px;justify-content:flex-start}
+.choice.correct{background:#e7f7ee;border-color:var(--ok);color:#1c7a4f}
+.choice.wrong{background:#fdeceb;border-color:var(--ng);color:#b5392c}
+.choice.reveal{border-color:var(--ok);box-shadow:0 0 0 3px rgba(46,155,107,.18)}
+.choice.done{cursor:default}
+.choice.done:hover{box-shadow:none}
+.choice.done:not(.correct):not(.wrong):not(.reveal){opacity:.42}
+.choice.correct::after{content:"◎";margin-left:auto;font-size:20px;padding-left:8px}
+.choice.wrong::after{content:"✕";margin-left:auto;font-size:18px;padding-left:8px}
+
+/* avatar */
+.ava{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;flex:none;line-height:1;vertical-align:middle}
+.ava.emoji{background:#fff;border:3px solid var(--era);box-shadow:0 3px 10px rgba(0,0,0,.08)}
+img.ava{object-fit:cover;border:3px solid var(--era)}
+
+/* feedback */
+.fb{margin-top:16px;border-radius:18px;padding:16px;border:2px solid;animation:slideup .25s}
+.fb.ok{background:#eefaf2;border-color:var(--ok)}
+.fb.ng{background:#fdf0ee;border-color:#f0a79e}
+.fbhead{font-family:var(--disp);font-weight:800;font-size:20px;margin-bottom:8px}
+.fb.ok .fbhead{color:#1c7a4f}
+.fb.ng .fbhead{color:#b5392c}
+.fbbody{display:flex;gap:12px;align-items:center}
+.fbname{font-weight:800;font-size:17px}
+.fbname small{font-weight:400;color:var(--muted);font-size:13px}
+.fbdeed{font-size:14px;color:#4a463d;margin-top:2px;line-height:1.45}
+.fbtrivia{margin-top:10px;font-size:13.5px;color:#5a554a;background:rgba(255,255,255,.6);border-radius:10px;padding:9px 11px;line-height:1.5}
+.fbnew{margin-top:10px;font-weight:700;color:var(--kin);font-size:14px}
+.next{margin-top:14px;width:100%;font:inherit;font-weight:800;font-size:17px;color:#fff;background:var(--era);border:none;border-radius:14px;padding:14px;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,.12);transition:transform .08s,filter .15s}
+.next:hover{filter:brightness(1.05)}
+.next:active{transform:scale(.99)}
+
+/* result */
+.resultcard{text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+.ring{position:relative;--p:0;width:148px;height:148px;border-radius:50%;background:conic-gradient(var(--ok) calc(var(--p)*1%),var(--bg2) 0);display:flex;align-items:center;justify-content:center;margin:6px 0}
+.ring::before{content:"";position:absolute;width:116px;height:116px;border-radius:50%;background:var(--card)}
+.ringnum{position:relative;font-family:var(--disp);font-weight:800;font-size:40px;color:var(--sumi);line-height:1}
+.ringnum span{font-size:18px;color:var(--muted)}
+.rstat{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;font-size:14px;color:#5a554a}
+.rstat b{color:var(--sumi);font-size:16px}
+.rstat .newline{flex-basis:100%;color:var(--kin)}
+.rstat .newline b{color:var(--kin)}
+.praise{font-family:var(--disp);font-weight:800;font-size:18px;color:var(--ai);margin-top:4px}
+.reviewlist{display:flex;flex-direction:column;gap:8px}
+.rev{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--era);border-radius:12px;padding:12px}
+.revname b{font-size:16px}
+.revname small{color:var(--muted);font-size:12px;margin-left:6px}
+.revdeed{font-size:13.5px;color:#4a463d;margin-top:3px;line-height:1.45}
+.allright{text-align:center;font-weight:800;color:var(--ok);font-size:18px;padding:14px}
+.rbtns{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+
+/* zukan */
+.zprog{display:flex;align-items:center;gap:12px}
+.zrank{font-family:var(--disp);font-weight:800;font-size:15px;white-space:nowrap}
+.zera{margin-top:18px}
+.zerah{font-family:var(--mincho);font-weight:700;font-size:15px;color:#fff;background:var(--era);border-radius:10px;padding:7px 12px;display:flex;justify-content:space-between;align-items:center}
+.zerah span{font-size:13px;opacity:.92}
+.zgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:10px;margin-top:10px}
+.zcell{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 6px;font:inherit;font-size:12px;font-weight:700;color:var(--sumi);cursor:pointer;transition:transform .08s,box-shadow .15s}
+.zcell:hover{box-shadow:0 6px 14px rgba(60,50,30,.1)}
+.zcell:active{transform:scale(.97)}
+.zcell span{text-align:center;line-height:1.2}
+.zcell.locked{background:#f0ece2;border-style:dashed;color:#b3ab9c;cursor:default}
+.zcell .q{width:56px;height:56px;border-radius:50%;background:#e3ddd0;display:flex;align-items:center;justify-content:center;font-size:26px;color:#b3ab9c}
+
+/* modal */
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:20px;z-index:1000}
+.modal.show{display:flex}
+.mback{position:absolute;inset:0;background:rgba(30,25,15,.5);backdrop-filter:blur(2px)}
+.mcard{position:relative;background:var(--card);border-radius:22px;padding:24px 20px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.3);border-top:6px solid var(--era);animation:pop .25s}
+.mx{position:absolute;top:10px;right:12px;background:none;border:none;font-size:20px;color:#9a9384;cursor:pointer}
+.mname{font-family:var(--disp);font-weight:800;font-size:24px;margin-top:10px}
+.mname span{display:block;font-family:var(--body);font-weight:400;font-size:13px;color:var(--muted);margin-top:2px}
+.mbadge{display:inline-block;font-family:var(--mincho);font-size:12px;color:#fff;background:var(--era);padding:3px 12px;border-radius:999px;margin-top:8px}
+.mdeed{font-size:16px;font-weight:700;margin-top:12px;line-height:1.55}
+.mtrivia{font-size:13.5px;color:#5a554a;background:var(--bg2);border-radius:10px;padding:10px 12px;margin-top:12px;line-height:1.55}
+
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:9999}
+
+@keyframes pop{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes slideup{0%{transform:translateY(10px);opacity:0}100%{transform:translateY(0);opacity:1}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="modal" class="modal"></div>
+<canvas id="confetti"></canvas>
+<script>
+/* ===== データ：時代 ===== */
+const ERAS=[
+ {key:'弥生',  short:'弥生', color:'#9c6b4a'},
+ {key:'飛鳥',  short:'飛鳥', color:'#8159a8'},
+ {key:'奈良',  short:'奈良', color:'#d98c1f'},
+ {key:'平安',  short:'平安', color:'#cf5191'},
+ {key:'鎌倉',  short:'鎌倉', color:'#2f8f8f'},
+ {key:'室町',  short:'室町', color:'#5fa03e'},
+ {key:'安土桃山',short:'桃山', color:'#d23f2f'},
+ {key:'江戸',  short:'江戸', color:'#3b62b5'},
+ {key:'明治',  short:'明治', color:'#5b6b8c'},
+ {key:'大正',  short:'大正', color:'#b07a3e'},
+ {key:'昭和',  short:'昭和', color:'#5f7a8c'},
+];
+function eraColor(k){const e=ERAS.find(x=>x.key===k);return e?e.color:'#888';}
+
+/* ===== データ：歴史人物42人（学習指導要領）=====
+   img を 'images/xxx.jpg' などにすると、その写真が自動で使われます。 */
+const FIGURES=[
+ {id:1, name:'卑弥呼', yomi:'ひみこ', era:'弥生', emoji:'👑', deed:'邪馬台国を治め、中国(魏)に使いを送った', trivia:'中国の古い歴史書「魏志倭人伝」に登場するよ。', img:null, level:1},
+ {id:2, name:'聖徳太子', yomi:'しょうとくたいし', era:'飛鳥', emoji:'📜', deed:'十七条の憲法や冠位十二階を定めた', trivia:'天皇を中心とした国づくりを目指したよ。', img:null, level:1},
+ {id:3, name:'小野妹子', yomi:'おののいもこ', era:'飛鳥', emoji:'⛵', deed:'遣隋使として隋(中国)にわたった', trivia:'進んだ文化や制度を日本に持ち帰ったよ。', img:null, level:1},
+ {id:4, name:'中大兄皇子', yomi:'なかのおおえのおうじ', era:'飛鳥', emoji:'⚔️', deed:'大化の改新という政治の改革を始めた', trivia:'のちに天智天皇になったよ。', img:null, level:1},
+ {id:5, name:'中臣鎌足', yomi:'なかとみのかまたり', era:'飛鳥', emoji:'🤝', deed:'中大兄皇子とともに大化の改新を進めた', trivia:'藤原氏の祖先(藤原鎌足)だよ。', img:null, level:1},
+ {id:6, name:'聖武天皇', yomi:'しょうむてんのう', era:'奈良', emoji:'🗿', deed:'東大寺の大仏をつくらせた', trivia:'仏教の力で国を守ろうとしたよ。', img:null, level:1},
+ {id:7, name:'行基', yomi:'ぎょうき', era:'奈良', emoji:'🙏', deed:'人々と協力して大仏づくりを助けた', trivia:'橋や池づくりで人々を助けたお坊さんだよ。', img:null, level:1},
+ {id:8, name:'鑑真', yomi:'がんじん', era:'奈良', emoji:'☸️', deed:'唐から日本にわたり仏教の決まりを伝えた', trivia:'目が見えなくなっても来日をあきらめなかったよ。', img:null, level:1},
+ {id:9, name:'藤原道長', yomi:'ふじわらのみちなが', era:'平安', emoji:'🌕', deed:'摂関政治で大きな力をにぎった', trivia:'「この世をば…」の和歌で有名だよ。', img:null, level:1},
+ {id:10,name:'紫式部', yomi:'むらさきしきぶ', era:'平安', emoji:'📖', deed:'「源氏物語」を書いた', trivia:'世界最古の長編小説ともいわれるよ。', img:null, level:1},
+ {id:11,name:'清少納言', yomi:'せいしょうなごん', era:'平安', emoji:'🖋️', deed:'随筆「枕草子」を書いた', trivia:'「春はあけぼの」の書き出しが有名だよ。', img:null, level:1},
+ {id:12,name:'平清盛', yomi:'たいらのきよもり', era:'平安', emoji:'🗡️', deed:'武士で初めて太政大臣になった', trivia:'中国(宋)との貿易にも力を入れたよ。', img:null, level:1},
+ {id:13,name:'源頼朝', yomi:'みなもとのよりとも', era:'鎌倉', emoji:'🏇', deed:'鎌倉に幕府を開いた', trivia:'武士による政治のはじまりだよ。', img:null, level:1},
+ {id:14,name:'源義経', yomi:'みなもとのよしつね', era:'鎌倉', emoji:'🏹', deed:'壇ノ浦の戦いで平氏をほろぼした', trivia:'兄・頼朝とは後に対立したよ。', img:null, level:1},
+ {id:15,name:'北条時宗', yomi:'ほうじょうときむね', era:'鎌倉', emoji:'🛡️', deed:'元(モンゴル)の襲来をふせいだ', trivia:'「神風」とよばれた暴風雨も元軍を苦しめたよ。', img:null, level:1},
+ {id:16,name:'足利義満', yomi:'あしかがよしみつ', era:'室町', emoji:'✨', deed:'金閣を建て、明と貿易をした', trivia:'金閣は金ぱくでかがやいているよ。', img:null, level:1},
+ {id:17,name:'足利義政', yomi:'あしかがよしまさ', era:'室町', emoji:'🍵', deed:'銀閣を建てた', trivia:'今の和室につながる文化(東山文化)が生まれたよ。', img:null, level:1},
+ {id:18,name:'雪舟', yomi:'せっしゅう', era:'室町', emoji:'🖼️', deed:'日本風の水墨画を完成させた', trivia:'墨だけで風景を描いたよ。', img:null, level:1},
+ {id:19,name:'ザビエル', yomi:'ざびえる', era:'室町', emoji:'✝️', deed:'日本にキリスト教を伝えた', trivia:'1549年に鹿児島へやってきたよ。', img:null, level:1},
+ {id:20,name:'織田信長', yomi:'おだのぶなが', era:'安土桃山', emoji:'🔥', deed:'全国統一を目指し、楽市楽座を行った', trivia:'鉄砲を上手に使って戦ったよ。', img:null, level:1},
+ {id:21,name:'豊臣秀吉', yomi:'とよとみひでよし', era:'安土桃山', emoji:'🌾', deed:'全国を統一し、検地・刀狩を行った', trivia:'農民から天下人にまで出世したよ。', img:null, level:1},
+ {id:22,name:'徳川家康', yomi:'とくがわいえやす', era:'江戸', emoji:'🏯', deed:'江戸幕府を開いた', trivia:'江戸幕府は約260年続いたよ。', img:null, level:1},
+ {id:23,name:'徳川家光', yomi:'とくがわいえみつ', era:'江戸', emoji:'🔒', deed:'参勤交代を定め、鎖国を完成させた', trivia:'大名を1年おきに江戸に住まわせたよ。', img:null, level:1},
+ {id:24,name:'近松門左衛門', yomi:'ちかまつもんざえもん', era:'江戸', emoji:'🎭', deed:'人形浄瑠璃や歌舞伎の脚本を書いた', trivia:'町人に大人気だったよ。', img:null, level:1},
+ {id:25,name:'歌川広重', yomi:'うたがわひろしげ', era:'江戸', emoji:'🌊', deed:'浮世絵「東海道五十三次」を描いた', trivia:'風景画の名人だよ。', img:null, level:1},
+ {id:26,name:'本居宣長', yomi:'もとおりのりなが', era:'江戸', emoji:'📚', deed:'「古事記伝」を書き国学を大成した', trivia:'日本古来の考え方を研究したよ。', img:null, level:1},
+ {id:27,name:'杉田玄白', yomi:'すぎたげんぱく', era:'江戸', emoji:'🩺', deed:'「解体新書」を出版した', trivia:'オランダの医学書をほん訳したよ(蘭学)。', img:null, level:1},
+ {id:28,name:'伊能忠敬', yomi:'いのうただたか', era:'江戸', emoji:'🗺️', deed:'全国を測量して正確な日本地図をつくった', trivia:'50さいを過ぎてから測量の旅に出たよ。', img:null, level:1},
+ {id:29,name:'ペリー', yomi:'ぺりー', era:'江戸', emoji:'🚢', deed:'黒船で来航し、開国をせまった', trivia:'4せきの黒船で浦賀にやってきたよ。', img:null, level:1},
+ {id:30,name:'勝海舟', yomi:'かつかいしゅう', era:'江戸', emoji:'⚓', deed:'江戸城を戦わずに明けわたす交渉をした', trivia:'日本の海軍づくりにもつくしたよ。', img:null, level:1},
+ {id:31,name:'西郷隆盛', yomi:'さいごうたかもり', era:'明治', emoji:'🐕', deed:'倒幕に活躍し、明治維新の中心となった', trivia:'上野公園には犬を連れた像があるよ。', img:null, level:1},
+ {id:32,name:'大久保利通', yomi:'おおくぼとしみち', era:'明治', emoji:'🏛️', deed:'明治政府の中心となって改革を進めた', trivia:'強い近代国家づくりを目指したよ。', img:null, level:1},
+ {id:33,name:'木戸孝允', yomi:'きどたかよし', era:'明治', emoji:'✒️', deed:'薩長同盟を結び、明治維新に活躍した', trivia:'桂小五郎ともよばれたよ。', img:null, level:1},
+ {id:34,name:'明治天皇', yomi:'めいじてんのう', era:'明治', emoji:'🎌', deed:'五箇条の御誓文を出した', trivia:'新しい国づくりの方針を示したよ。', img:null, level:1},
+ {id:35,name:'福沢諭吉', yomi:'ふくざわゆきち', era:'明治', emoji:'🎓', deed:'「学問のすゝめ」を書き、慶應義塾をつくった', trivia:'長く一万円札の顔だったよ。', img:null, level:1},
+ {id:36,name:'大隈重信', yomi:'おおくましげのぶ', era:'明治', emoji:'🏫', deed:'早稲田大学をつくり、政党を結成した', trivia:'内閣総理大臣も務めたよ。', img:null, level:1},
+ {id:37,name:'板垣退助', yomi:'いたがきたいすけ', era:'明治', emoji:'✊', deed:'自由民権運動を進めた', trivia:'「自由は死せず」の言葉で有名だよ。', img:null, level:1},
+ {id:38,name:'伊藤博文', yomi:'いとうひろぶみ', era:'明治', emoji:'🎩', deed:'初代内閣総理大臣になった', trivia:'大日本帝国憲法づくりにもかかわったよ。', img:null, level:1},
+ {id:39,name:'陸奥宗光', yomi:'むつむねみつ', era:'明治', emoji:'📝', deed:'領事裁判権の撤廃に成功した', trivia:'不平等条約の改正を進めたよ。', img:null, level:1},
+ {id:40,name:'東郷平八郎', yomi:'とうごうへいはちろう', era:'明治', emoji:'🎖️', deed:'日露戦争(日本海海戦)で活躍した', trivia:'ロシアの艦隊を破ったよ。', img:null, level:1},
+ {id:41,name:'小村寿太郎', yomi:'こむらじゅたろう', era:'明治', emoji:'📋', deed:'関税自主権の回復に成功した', trivia:'不平等条約の改正を完成させたよ。', img:null, level:1},
+ {id:42,name:'野口英世', yomi:'のぐちひでよ', era:'明治', emoji:'🔬', deed:'細菌を研究した医学者', trivia:'世界で活躍し、長く千円札の顔だったよ。', img:null, level:1},
+ {id:43,name:'足利尊氏', yomi:'あしかがたかうじ', era:'室町', emoji:'🏯', deed:'室町幕府を開いた初代将軍', trivia:'後醍醐天皇と対立したよ。', img:null, level:2},
+ {id:44,name:'後醍醐天皇', yomi:'ごだいごてんのう', era:'鎌倉', emoji:'👑', deed:'鎌倉幕府をたおし建武の新政を行った', trivia:'天皇中心の政治を目指したよ。', img:null, level:2},
+ {id:45,name:'桓武天皇', yomi:'かんむてんのう', era:'平安', emoji:'🏙️', deed:'都を平安京(京都)に移した', trivia:'794年、平安時代の始まりだよ。', img:null, level:2},
+ {id:46,name:'武田信玄', yomi:'たけだしんげん', era:'室町', emoji:'🐎', deed:'甲斐(山梨)の強い戦国大名', trivia:'上杉謙信と何度も戦ったよ。', img:null, level:2},
+ {id:47,name:'上杉謙信', yomi:'うえすぎけんしん', era:'室町', emoji:'⚔️', deed:'越後(新潟)の戦国大名', trivia:'「軍神」とよばれた戦上手だよ。', img:null, level:2},
+ {id:48,name:'千利休', yomi:'せんのりきゅう', era:'安土桃山', emoji:'🍵', deed:'わび茶(茶の湯)を完成させた', trivia:'信長や秀吉に仕えたよ。', img:null, level:2},
+ {id:49,name:'徳川綱吉', yomi:'とくがわつなよし', era:'江戸', emoji:'🐶', deed:'生類憐みの令を出した', trivia:'犬を大切にする命令で有名だよ。', img:null, level:2},
+ {id:50,name:'徳川吉宗', yomi:'とくがわよしむね', era:'江戸', emoji:'⚖️', deed:'享保の改革を行った', trivia:'質素・倹約をすすめた将軍だよ。', img:null, level:2},
+ {id:51,name:'松尾芭蕉', yomi:'まつおばしょう', era:'江戸', emoji:'🍃', deed:'俳句を芸術に高め「おくのほそ道」を書いた', trivia:'各地を旅して俳句をよんだよ。', img:null, level:2},
+ {id:52,name:'葛飾北斎', yomi:'かつしかほくさい', era:'江戸', emoji:'🗻', deed:'浮世絵「富嶽三十六景」を描いた', trivia:'「神奈川沖浪裏」が世界的に有名だよ。', img:null, level:2},
+ {id:53,name:'坂本龍馬', yomi:'さかもとりょうま', era:'江戸', emoji:'🌏', deed:'薩長同盟の仲立ちをした', trivia:'倒幕への流れをつくったよ。', img:null, level:2},
+ {id:54,name:'渋沢栄一', yomi:'しぶさわえいいち', era:'明治', emoji:'💴', deed:'多くの会社や銀行をつくった', trivia:'新しい一万円札の顔だよ。', img:null, level:2},
+ {id:55,name:'津田梅子', yomi:'つだうめこ', era:'明治', emoji:'🎒', deed:'女子の教育につくした', trivia:'新しい五千円札の顔だよ。', img:null, level:2},
+ {id:56,name:'北里柴三郎', yomi:'きたさとしばさぶろう', era:'明治', emoji:'🦠', deed:'細菌の研究で活躍した医学者', trivia:'新しい千円札の顔だよ。', img:null, level:2},
+ {id:57,name:'北条政子', yomi:'ほうじょうまさこ', era:'鎌倉', emoji:'👩', deed:'「尼将軍」とよばれ幕府を支えた', trivia:'承久の乱で御家人をまとめたよ。', img:null, level:3},
+ {id:58,name:'後鳥羽上皇', yomi:'ごとばじょうこう', era:'鎌倉', emoji:'🏹', deed:'承久の乱を起こした', trivia:'朝廷の力を取りもどそうとしたよ。', img:null, level:3},
+ {id:59,name:'法然', yomi:'ほうねん', era:'鎌倉', emoji:'🙏', deed:'浄土宗を開いた', trivia:'「南無阿弥陀仏」をとなえる教えだよ。', img:null, level:3},
+ {id:60,name:'親鸞', yomi:'しんらん', era:'鎌倉', emoji:'☸️', deed:'浄土真宗を広めた', trivia:'法然の弟子だったよ。', img:null, level:3},
+ {id:61,name:'日蓮', yomi:'にちれん', era:'鎌倉', emoji:'📿', deed:'日蓮宗(法華宗)を開いた', trivia:'「南無妙法蓮華経」をとなえたよ。', img:null, level:3},
+ {id:62,name:'世阿弥', yomi:'ぜあみ', era:'室町', emoji:'🎭', deed:'父とともに能を大成した', trivia:'「風姿花伝」を書いたよ。', img:null, level:3},
+ {id:63,name:'石田三成', yomi:'いしだみつなり', era:'安土桃山', emoji:'🗡️', deed:'関ヶ原の戦いで徳川家康と戦った', trivia:'秀吉の家臣だったよ。', img:null, level:3},
+ {id:64,name:'田沼意次', yomi:'たぬまおきつぐ', era:'江戸', emoji:'💰', deed:'商業を重視した政治を進めた', trivia:'株仲間を認め経済を活発にしたよ。', img:null, level:3},
+ {id:65,name:'松平定信', yomi:'まつだいらさだのぶ', era:'江戸', emoji:'📜', deed:'寛政の改革を行った', trivia:'きびしい引きしめ政策だったよ。', img:null, level:3},
+ {id:66,name:'水野忠邦', yomi:'みずのただくに', era:'江戸', emoji:'📋', deed:'天保の改革を行った', trivia:'株仲間の解散などを命じたよ。', img:null, level:3},
+ {id:67,name:'大塩平八郎', yomi:'おおしおへいはちろう', era:'江戸', emoji:'🔥', deed:'大塩の乱を起こした', trivia:'元役人で、人々を救おうとしたよ。', img:null, level:3},
+ {id:68,name:'井伊直弼', yomi:'いいなおすけ', era:'江戸', emoji:'🌸', deed:'日米修好通商条約を結んだ', trivia:'桜田門外の変でたおされたよ。', img:null, level:3},
+ {id:69,name:'吉田松陰', yomi:'よしだしょういん', era:'江戸', emoji:'📖', deed:'松下村塾で多くの志士を育てた', trivia:'高杉晋作や伊藤博文の先生だよ。', img:null, level:3},
+ {id:70,name:'高杉晋作', yomi:'たかすぎしんさく', era:'江戸', emoji:'🎌', deed:'奇兵隊をつくった', trivia:'長州藩の倒幕運動を進めたよ。', img:null, level:3},
+ {id:71,name:'与謝野晶子', yomi:'よさのあきこ', era:'明治', emoji:'🖋️', deed:'歌人として活躍した', trivia:'「君死にたまふことなかれ」をよんだよ。', img:null, level:3},
+ {id:72,name:'原敬', yomi:'はらたかし', era:'大正', emoji:'🎩', deed:'本格的な政党内閣をつくった', trivia:'「平民宰相」とよばれたよ。', img:null, level:3},
+ {id:73,name:'平塚らいてう', yomi:'ひらつからいてう', era:'大正', emoji:'✊', deed:'女性の地位向上の運動を進めた', trivia:'雑誌「青鞜」を創刊したよ。', img:null, level:3},
+ {id:74,name:'犬養毅', yomi:'いぬかいつよし', era:'昭和', emoji:'🏛️', deed:'五・一五事件でたおされた首相', trivia:'政党政治が終わるきっかけになったよ。', img:null, level:3},
+];
+
+/* ===== 保存（GitHub Pagesでは保存。プレビュー等で使えない場合も落ちないようガード）===== */
+const KEY={col:'rekishi.collected.v1',mute:'rekishi.muted.v1'};
+const Store={
+  get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+};
+
+/* ===== 状態 ===== */
+const state={
+  screen:'home', mode:'whoDid', level:1, range:new Set(ERAS.map(e=>e.key)), count:10,
+  queue:[], idx:0, score:0, combo:0, maxCombo:0,
+  roundResults:[], newThisRound:new Set(),
+  cur:null, answered:false,
+  ta:{active:false,timeLeft:60,correct:0,id:0}, tapool:[], tai:0,
+  collected:new Set(Store.get(KEY.col,[])), muted:Store.get(KEY.mute,false)
+};
+
+/* ===== ユーティリティ ===== */
+const app=document.getElementById('app');
+const modal=document.getElementById('modal');
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+function scopeFigures(){return FIGURES.filter(f=>f.level<=state.level);}
+function scopeEras(){return ERAS.filter(e=>FIGURES.some(f=>f.level<=state.level&&f.era===e.key));}
+function eraFigs(k){return FIGURES.filter(f=>f.level<=state.level&&f.era===k);}
+function isAllRange(){return state.range.size>=scopeEras().length;}
+function getPool(){return FIGURES.filter(f=>f.level<=state.level&&state.range.has(f.era));}
+function pickDistractors(ans,n){
+  const sc=scopeFigures();
+  const same=shuffle(sc.filter(f=>f.id!==ans.id&&f.era===ans.era));
+  const diff=shuffle(sc.filter(f=>f.id!==ans.id&&f.era!==ans.era));
+  let picks=same.slice(0,n);
+  if(picks.length<n)picks=picks.concat(diff.slice(0,n-picks.length));
+  if(picks.length<n)picks=picks.concat(shuffle(FIGURES.filter(f=>f.id!==ans.id&&picks.indexOf(f)<0)).slice(0,n-picks.length));
+  return picks;
+}
+function setLevel(l){state.level=l;state.range=new Set(scopeEras().map(e=>e.key));}
+function rankFor(got,total){
+  const p=total?got/total:0;
+  if(total>0&&got>=total)return{name:'れきしマスター',icon:'👑',color:'#e0922e'};
+  if(p>=0.75)return{name:'れきしはかせ',icon:'🎓',color:'#8159a8'};
+  if(p>=0.5) return{name:'れきしツウ',icon:'📖',color:'#3b62b5'};
+  if(p>=0.25)return{name:'れきしたんけん家',icon:'🔍',color:'#2f8f8f'};
+  if(got>=1) return{name:'れきしみならい',icon:'🌱',color:'#5fa03e'};
+  return{name:'これからスタート',icon:'🚪',color:'#9c6b4a'};
+}
+function praiseFor(p){
+  if(p===100)return'パーフェクト！れきし博士みたい！';
+  if(p>=80)return'すごい！よくおぼえてるね！';
+  if(p>=60)return'いいね！その調子！';
+  if(p>=40)return'もう少し！ふくしゅうしてみよう。';
+  return'だいじょうぶ。くりかえせば おぼえられるよ！';
+}
+/* 人物画像：f.img を指定するか、IMG_DIR を 'images/' 等にすると images/<id>.png を自動表示。
+   画像が無い/読めない場合は絵文字アバターに自動で戻ります。 */
+const IMG_DIR='images/';
+function figImg(f){return f.img||(IMG_DIR?IMG_DIR+f.id+'.png':null);}
+window.__emoAva=function(id,size){const f=FIGURES.find(x=>x.id===id);const s=document.createElement('span');s.className='ava emoji';s.style.width=s.style.height=size+'px';s.style.fontSize=Math.round(size*0.52)+'px';s.style.setProperty('--era',eraColor(f.era));s.textContent=f.emoji;return s;};
+function avatar(f,size){
+  const src=figImg(f),c=eraColor(f.era);
+  if(src)return `<img class="ava" src="${src}" alt="${f.name}" style="width:${size}px;height:${size}px;--era:${c}" onerror="this.replaceWith(window.__emoAva(${f.id},${size}))">`;
+  return `<span class="ava emoji" style="width:${size}px;height:${size}px;font-size:${Math.round(size*0.52)}px;--era:${c}">${f.emoji}</span>`;
+}
+
+/* ===== 音（Web Audio・外部ファイル無し）===== */
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}return AC;}
+function ensureAudio(){const c=ac();if(c&&c.state==='suspended'&&c.resume)c.resume();}
+function beep(freq,t0,dur,type,vol){
+  const c=ac();if(!c||state.muted)return;
+  const o=c.createOscillator(),g=c.createGain();
+  o.type=type;o.frequency.value=freq;o.connect(g);g.connect(c.destination);
+  const t=c.currentTime+t0;
+  g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(vol,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.start(t);o.stop(t+dur+0.02);
+}
+function sCorrect(){beep(660,0,0.12,'triangle',0.25);beep(880,0.09,0.18,'triangle',0.22);}
+function sWrong(){beep(200,0,0.22,'sawtooth',0.16);beep(150,0.06,0.28,'sawtooth',0.14);}
+function sCombo(n){const b=520+Math.min(n,8)*40;beep(b,0,0.1,'square',0.16);beep(b*1.25,0.07,0.14,'square',0.14);}
+function sTick(){beep(440,0,0.05,'sine',0.07);}
+
+/* ===== 紙吹雪 ===== */
+const cv=document.getElementById('confetti'),cx=cv.getContext('2d');
+function fit(){cv.width=innerWidth;cv.height=innerHeight;}fit();addEventListener('resize',fit);
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const CC=['#d8503f','#e0922e','#2f8f8f','#3b62b5','#cf5191','#5fa03e','#8159a8'];
+let parts=[],anim=0;
+function burst(){
+  if(RM)return;
+  const ox=innerWidth/2,oy=innerHeight*0.36;
+  for(let i=0;i<90;i++){const a=Math.random()*Math.PI*2,sp=4+Math.random()*7;
+    parts.push({x:ox,y:oy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-3,g:0.18+Math.random()*0.1,life:60+Math.random()*30,age:0,c:CC[i%CC.length],s:5+Math.random()*5,rot:Math.random()*6,vr:0.2-Math.random()*0.4});}
+  if(!anim)loop();
+}
+function loop(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  parts=parts.filter(p=>p.age<p.life);
+  parts.forEach(p=>{p.age++;p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;const al=1-p.age/p.life;
+    cx.save();cx.translate(p.x,p.y);cx.rotate(p.rot);cx.globalAlpha=Math.max(0,al);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);cx.restore();});
+  if(parts.length)anim=requestAnimationFrame(loop);else{anim=0;cx.clearRect(0,0,cv.width,cv.height);}
+}
+
+/* ===== 画面：ホーム ===== */
+function ribbonHTML(){
+  return '<div class="ribbon">'+scopeEras().map(e=>{
+    const list=eraFigs(e.key);
+    const got=list.filter(f=>state.collected.has(f.id)).length;
+    return `<div class="seg ${got>0?'lit':''} ${got===list.length?'done':''}" style="--era:${e.color}"><div class="e">${e.short}</div><div class="n">${got}/${list.length}</div></div>`;
+  }).join('')+'</div>';
+}
+function homeHTML(){
+  const sc=scopeFigures(),total=sc.length;
+  const got=sc.filter(f=>state.collected.has(f.id)).length,r=rankFor(got,total);
+  const eraChips=['ぜんぶ'].concat(scopeEras().map(e=>e.key));
+  const lv=[[1,'初級','必修42人'],[2,'中級','小学＋α'],[3,'上級','中学範囲']];
+  return `
+  <header class="hero">
+    <div class="eyebrow">小6 社会・れきし</div>
+    <h1 class="title"><span class="seal">歴</span>れきし人物クイズ</h1>
+    <p class="sub">${total}人の はたらきを ゲームでおぼえよう</p>
+  </header>
+
+  <div style="height:16px"></div>
+  <section class="card rankcard">
+    <div class="rankbadge" style="--era:${r.color}">${r.icon}</div>
+    <div class="rankinfo">
+      <div class="ranklabel">いまのランク</div>
+      <div class="rankname">${r.name}</div>
+      <div class="rankprog"><div class="bar"><span style="width:${total?Math.round(got/total*100):0}%"></span></div><span><b>${got}</b>/${total}人</span></div>
+    </div>
+  </section>
+
+  <div class="seclabel">じだいの ずかん</div>
+  ${ribbonHTML()}
+
+  <div class="seclabel">クイズを えらぶ</div>
+  <div class="modes">
+    <button class="mode big" data-act="mode" data-mode="whoDid">
+      <span class="micon">🧑</span>
+      <span class="mtxt"><b>人物 → やったこと</b><i>名前を見て、はたらきを当てる</i></span>
+    </button>
+    <button class="mode big" data-act="mode" data-mode="whoIs">
+      <span class="micon">📜</span>
+      <span class="mtxt"><b>やったこと → 人物</b><i>はたらきを見て、名前を当てる</i></span>
+    </button>
+    <div class="moderow">
+      <button class="mode" data-act="mode" data-mode="mix"><span class="micon">🔀</span><b>ミックス</b></button>
+      <button class="mode" data-act="ta"><span class="micon">⏱️</span><b>60秒タイムアタック</b></button>
+    </div>
+    <button class="mode wide" data-act="zukan"><span class="micon">📚</span><span class="mtxt"><b>人物ずかんを見る</b><i>あつめた人物：${got}/${total}</i></span></button>
+  </div>
+
+  <div class="seclabel">せってい</div>
+  <div class="card">
+    <div class="setrow">
+      <div class="setk">レベル</div>
+      <div class="chips">${lv.map(([n,a,b])=>`<button class="chip ${state.level===n?'on':''}" data-act="level" data-level="${n}">${a}<small>${b}</small></button>`).join('')}</div>
+    </div>
+    <div class="setrow">
+      <div class="setk">出題する時代</div>
+      <div class="chips">${eraChips.map(k=>{const on=k==='ぜんぶ'?isAllRange():state.range.has(k);return `<button class="chip ${on?'on':''}" data-act="era" data-era="${k}">${k}</button>`;}).join('')}</div>
+    </div>
+    <div class="setrow">
+      <div class="setk">問題数</div>
+      <div class="chips">${[5,10,'all'].map(c=>`<button class="chip ${state.count==c?'on':''}" data-act="count" data-count="${c}">${c==='all'?'ぜんぶ':c+'問'}</button>`).join('')}</div>
+    </div>
+    <div class="setrow">
+      <div class="setk">音</div>
+      <div class="chips">
+        <button class="chip ${!state.muted?'on':''}" data-act="sound" data-on="1">🔊 オン</button>
+        <button class="chip ${state.muted?'on':''}" data-act="sound" data-on="0">🔇 オフ</button>
+      </div>
+    </div>
+  </div>
+  <p class="foot">レベルを上げると、出てくる人物がふえます（初級42→中級56→上級74人）。<br>正解すると「人物ずかん」に1人ずつ集まります。</p>
+  `;
+}
+
+/* ===== 画面：クイズ ===== */
+function topbarHTML(){
+  const ta=state.ta.active;
+  const counter=ta?`せいかい ${state.ta.correct}`:`問題 ${state.idx+1}/${state.queue.length}`;
+  return `<div class="topbar">
+    <button class="quit" data-act="home">← やめる</button>
+    <div class="tstat">
+      ${ta?`<span class="timer" id="timer">⏱️ ${state.ta.timeLeft}</span>`:''}
+      <span class="counter" id="counter">${counter}</span>
+      <span class="score" id="score">⭐ ${state.score}</span>
+    </div>
+    <div class="combo" id="combo">${state.combo>=2?`🔥 ${state.combo}れんぞく！`:''}</div>
+  </div>`;
+}
+function quizHTML(){
+  const c=state.cur,col=eraColor(c.figure.era);
+  let body;
+  if(c.type==='whoDid'){
+    body=`<div class="qcard" style="--era:${col}"><div class="qbar"></div>
+      <div class="qperson">${avatar(c.figure,120)}
+        <div class="qname">${c.figure.name}<span>${c.figure.yomi}</span></div>
+        <div class="qbadge">${c.figure.era}時代</div></div>
+      <div class="qask">この人が やったことは？</div></div>
+      <div class="choices col">${c.choices.map((ch,i)=>`<button class="choice" data-i="${i}">${ch.text}</button>`).join('')}</div>`;
+  }else{
+    body=`<div class="qcard" style="--era:${col}"><div class="qbar"></div>
+      <div class="qask top">つぎのことを したのは だれ？</div>
+      <div class="qdeed">「${c.figure.deed}」</div></div>
+      <div class="choices grid2">${c.choices.map((ch,i)=>`<button class="choice withava" data-i="${i}">${avatar(ch.fig,34)}<span>${ch.fig.name}</span></button>`).join('')}</div>`;
+  }
+  return topbarHTML()+body+'<div id="fb"></div>';
+}
+
+/* ===== 画面：けっか ===== */
+function resultHTML(){
+  const total=state.roundResults.length;
+  const correct=state.roundResults.filter(r=>r.correct).length;
+  const wrongs=state.roundResults.filter(r=>!r.correct);
+  const pct=total?Math.round(correct/total*100):0;
+  const ta=state.ta.active;
+  const newCount=state.newThisRound.size;
+  return `
+  <header class="hero small"><div class="eyebrow">${ta?'タイムアタック けっか':'クイズ けっか'}</div></header>
+  <div style="height:8px"></div>
+  <section class="card resultcard">
+    <div class="ring" style="--p:${pct}"><div class="ringnum">${correct}<span>/${total}</span></div></div>
+    <div class="rstat">
+      <div>せいかい <b>${correct}</b> 問</div>
+      <div>スコア <b>${state.score}</b></div>
+      <div>最大コンボ <b>🔥${state.maxCombo}</b></div>
+      ${newCount?`<div class="newline">📒 ずかんに <b>${newCount}人</b> ふえた！</div>`:''}
+    </div>
+    <div class="praise">${praiseFor(pct)}</div>
+  </section>
+  ${wrongs.length?`<div class="seclabel">まちがえた人を ふくしゅう</div>
+  <div class="reviewlist">${wrongs.map(w=>`<div class="rev" style="--era:${eraColor(w.figure.era)}">${avatar(w.figure,40)}<div><div class="revname"><b>${w.figure.name}</b><small>${w.figure.era}時代</small></div><div class="revdeed">${w.figure.deed}</div></div></div>`).join('')}</div>`
+  :`<div class="allright">🎉 ぜんぶ せいかい！すごい！</div>`}
+  <div class="rbtns">
+    <button class="mode wide" data-act="again"><span class="micon">🔁</span><b>もういちど</b></button>
+    <button class="mode wide ghost" data-act="home"><span class="micon">🏠</span><b>ホームへ</b></button>
+  </div>`;
+}
+
+/* ===== 画面：ずかん ===== */
+function zukanHTML(){
+  const sc=scopeFigures(),total=sc.length;
+  const got=sc.filter(f=>state.collected.has(f.id)).length,r=rankFor(got,total);
+  return `
+  <div class="topbar"><button class="quit" data-act="home">← ホーム</button>
+    <div class="tstat"><span class="counter">あつめた人物 ${got}/${total}</span></div><div class="combo"></div></div>
+  <div class="card zprog"><div class="bar big"><span style="width:${total?Math.round(got/total*100):0}%"></span></div><div class="zrank">${r.icon} ${r.name}</div></div>
+  <div style="height:14px"></div>
+  ${ribbonHTML()}
+  ${scopeEras().map(e=>{
+    const list=eraFigs(e.key);
+    const got2=list.filter(f=>state.collected.has(f.id)).length;
+    return `<div class="zera"><div class="zerah" style="--era:${e.color}">${e.key}時代 <span>${got2}/${list.length}</span></div>
+      <div class="zgrid">${list.map(f=>{
+        return state.collected.has(f.id)
+          ?`<button class="zcell" data-act="detail" data-id="${f.id}" style="--era:${e.color}">${avatar(f,56)}<span>${f.name}</span></button>`
+          :`<div class="zcell locked"><span class="q">？</span><span>？？？</span></div>`;
+      }).join('')}</div></div>`;
+  }).join('')}
+  <p class="foot">クイズで正解すると ここに人物が ふえていくよ。</p>`;
+}
+
+/* ===== くわしく（モーダル）===== */
+function showDetail(id){
+  const f=FIGURES.find(x=>x.id===id);if(!f)return;
+  modal.innerHTML=`<div class="mback" data-act="closem"></div>
+    <div class="mcard" style="--era:${eraColor(f.era)}">
+      <button class="mx" data-act="closem">✕</button>
+      ${avatar(f,96)}
+      <div class="mname">${f.name}<span>${f.yomi}</span></div>
+      <div class="mbadge">${f.era}時代</div>
+      <div class="mdeed">${f.deed}</div>
+      <div class="mtrivia">💡 ${f.trivia}</div>
+    </div>`;
+  modal.classList.add('show');
+}
+function closeModal(){modal.classList.remove('show');modal.innerHTML='';}
+
+/* ===== 描画 ===== */
+function render(){
+  if(state.screen==='home')app.innerHTML=homeHTML();
+  else if(state.screen==='quiz')app.innerHTML=quizHTML();
+  else if(state.screen==='result')app.innerHTML=resultHTML();
+  else if(state.screen==='zukan')app.innerHTML=zukanHTML();
+}
+function go(s){state.screen=s;render();window.scrollTo(0,0);}
+
+/* ===== クイズ進行 ===== */
+function buildQuestion(fig){
+  const type=state.mode==='whoDid'?'whoDid':state.mode==='whoIs'?'whoIs':(Math.random()<0.5?'whoDid':'whoIs');
+  const d=pickDistractors(fig,3);
+  let choices;
+  if(type==='whoDid')choices=shuffle([{text:fig.deed,correct:true,fig}].concat(d.map(x=>({text:x.deed,correct:false,fig:x}))));
+  else choices=shuffle([{fig,correct:true}].concat(d.map(x=>({fig:x,correct:false}))));
+  state.cur={figure:fig,type,choices};
+  state.answered=false;
+}
+function nextQuestion(){
+  let fig;
+  if(state.ta.active){
+    if(state.ta.timeLeft<=0)return;
+    if(state.tai>=state.tapool.length){state.tapool=shuffle(state.tapool);state.tai=0;}
+    fig=state.tapool[state.tai++];
+  }else{
+    if(state.idx>=state.queue.length){finishRound();return;}
+    fig=state.queue[state.idx];
+  }
+  buildQuestion(fig);
+}
+function startRound(){
+  clearInterval(state.ta.id);state.ta.active=false;
+  let pool=shuffle(getPool());
+  state.queue=state.count==='all'?pool:pool.slice(0,Math.min(state.count,pool.length));
+  if(state.queue.length===0)state.queue=FIGURES.slice(0,5);
+  state.idx=0;state.score=0;state.combo=0;state.maxCombo=0;
+  state.roundResults=[];state.newThisRound=new Set();
+  nextQuestion();go('quiz');
+}
+function startTA(){
+  clearInterval(state.ta.id);
+  state.mode='mix';state.ta.active=true;state.ta.timeLeft=60;state.ta.correct=0;
+  state.idx=0;state.score=0;state.combo=0;state.maxCombo=0;
+  state.roundResults=[];state.newThisRound=new Set();
+  state.tapool=shuffle(getPool());state.tai=0;
+  nextQuestion();go('quiz');
+  state.ta.id=setInterval(()=>{
+    state.ta.timeLeft--;
+    const t=document.getElementById('timer');if(t)t.textContent='⏱️ '+state.ta.timeLeft;
+    if(state.ta.timeLeft<=5&&state.ta.timeLeft>0)sTick();
+    if(state.ta.timeLeft<=0){clearInterval(state.ta.id);finishRound();}
+  },1000);
+}
+function finishRound(){clearInterval(state.ta.id);go('result');}
+function onChoice(i,el){
+  if(state.answered)return;state.answered=true;
+  const c=state.cur,choice=c.choices[i],correct=!!choice.correct;
+  const btns=[].slice.call(app.querySelectorAll('.choice'));
+  btns.forEach((b,j)=>{b.classList.add('done');if(c.choices[j].correct)b.classList.add('reveal');});
+  el.classList.add(correct?'correct':'wrong');
+  let isNew=false;
+  if(correct){
+    state.combo++;state.maxCombo=Math.max(state.maxCombo,state.combo);
+    state.score+=100+(state.combo-1)*20;
+    if(state.ta.active)state.ta.correct++;
+    if(!state.collected.has(c.figure.id)){state.collected.add(c.figure.id);state.newThisRound.add(c.figure.id);isNew=true;Store.set(KEY.col,[].concat(Array.from(state.collected)));}
+    sCorrect();if(state.combo>=3)sCombo(state.combo);
+    burst();
+  }else{state.combo=0;sWrong();}
+  state.roundResults.push({figure:c.figure,type:c.type,correct});
+  const sc=document.getElementById('score');if(sc)sc.textContent='⭐ '+state.score;
+  const cb=document.getElementById('combo');if(cb)cb.textContent=state.combo>=2?`🔥 ${state.combo}れんぞく！`:'';
+  if(state.ta.active){const cn=document.getElementById('counter');if(cn)cn.textContent='せいかい '+state.ta.correct;}
+  showFeedback(correct,isNew);
+}
+function isLast(){return !state.ta.active&&state.idx>=state.queue.length-1;}
+function showFeedback(correct,isNew){
+  const f=state.cur.figure,fb=document.getElementById('fb');if(!fb)return;
+  fb.innerHTML=`<div class="fb ${correct?'ok':'ng'}">
+    <div class="fbhead">${correct?'◎ せいかい！':'✕ ざんねん…'}</div>
+    <div class="fbbody">${avatar(f,46)}<div>
+      <div class="fbname">${f.name}<small>（${f.era}時代）</small></div>
+      <div class="fbdeed">${f.deed}</div></div></div>
+    <div class="fbtrivia">💡 ${f.trivia}</div>
+    ${isNew?`<div class="fbnew">📒 ずかんに「${f.name}」をゲット！</div>`:''}
+    <button class="next" data-act="next" style="--era:${eraColor(f.era)}">${isLast()?'けっかを見る →':'つぎへ →'}</button></div>`;
+  fb.scrollIntoView({behavior:RM?'auto':'smooth',block:'nearest'});
+}
+function nextAfter(){
+  if(state.ta.active){if(state.ta.timeLeft<=0){finishRound();return;}nextQuestion();render();return;}
+  state.idx++;
+  if(state.idx>=state.queue.length){finishRound();return;}
+  nextQuestion();render();
+}
+function again(){if(state.ta.active)startTA();else startRound();}
+
+/* ===== 設定操作 ===== */
+function toggleEra(k){
+  const all=scopeEras().map(e=>e.key);
+  if(k==='ぜんぶ'){state.range=new Set(all);return;}
+  if(isAllRange()){state.range=new Set([k]);return;}
+  if(state.range.has(k))state.range.delete(k);else state.range.add(k);
+  if(state.range.size===0)state.range=new Set(all);
+}
+
+/* ===== イベント ===== */
+app.addEventListener('click',ev=>{
+  ensureAudio();
+  const b=ev.target.closest('[data-act],[data-i]');if(!b)return;
+  if(b.hasAttribute('data-i')){onChoice(+b.dataset.i,b);return;}
+  switch(b.dataset.act){
+    case'mode':state.mode=b.dataset.mode;startRound();break;
+    case'level':setLevel(+b.dataset.level);render();break;
+    case'ta':startTA();break;
+    case'zukan':go('zukan');break;
+    case'era':toggleEra(b.dataset.era);render();break;
+    case'count':state.count=b.dataset.count==='all'?'all':+b.dataset.count;render();break;
+    case'sound':state.muted=b.dataset.on==='0';Store.set(KEY.mute,state.muted);if(!state.muted)ensureAudio();render();break;
+    case'home':clearInterval(state.ta.id);state.ta.active=false;go('home');break;
+    case'next':nextAfter();break;
+    case'again':again();break;
+    case'detail':showDetail(+b.dataset.id);break;
+  }
+});
+modal.addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(b&&b.dataset.act==='closem')closeModal();});
+
+/* ===== 起動 ===== */
+setLevel(state.level);
+render();
+</script>
+</body>
+</html>
